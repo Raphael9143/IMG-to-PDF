@@ -1,21 +1,23 @@
-const express = require('express');
-const path = require('path');
 
-const app = express();
-const PORT = 3000;
+// app.post('/uploadfile', upload.single('singleImage'), (req, res, next) => {
+//     const file = req.file
+//     if (!file) {
+//       const error = new Error('Please upload a file!')
+//       error.httpStatusCode = 400
+//       return next(error)
+//     }
+//     res.send(file)
+// })
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
-});
-
-
-
+// app.post('/uploadmultiple', upload.array('multipleImage', 5), (req, res, next) => {
+//     const files = req.files
+//     if (!files) {
+//         const error = new Error('Please choose files!')
+//         error.httpStatusCode = 400
+//         return next(error)
+//     }
+//     res.send(files)
+// })
 
 
 

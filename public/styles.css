@@ -3,6 +3,8 @@
     align-items: center;
     flex-direction: column;
     gap: 10px;
+    padding: 20px;
+    border: 1px solid black;
 }
 
 #drop-zone {
@@ -17,7 +19,23 @@
     margin: 20px auto;
     color: #aaa;
 }
-#drop-zone:hover {
-    border-color: #333;
-    color: #333;
+
+form {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+button {
+    width: 60%;
+}
+
+.hidden { 
+    display: none; 
+}
+
+.visible { 
+    display: flex; 
 }

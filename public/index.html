@@ -11,9 +11,20 @@
 <body>
     <div class="container">
         <h1>Upload Image for Translation</h1>
-        <div id="drop-zone">Drag and drop an image here, or click to select</div>
-        <form id="upload-form" action="/upload" method="POST" enctype="multipart/form-data" style="display: none;">
-            <input type="file" name="image" id="file-input" accept="image/png, image/jpg" required>
+        <div id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="onDrop(event)">Drag and
+            drop
+            an image here</div>
+        <!-- singlefile -->
+        <form id="single-upload-from" action="/uploadfile" method="POST" enctype="multipart/form-data" method="POST" class=".hidden">
+            <input type="file" name="singleImage" id="single-file-input" accept="image/png, image/jpg" required
+                onchange="inputOnChange(this)"> 
+                <!-- đang chưa hiểu tại sao accept png với jpg rồi vẫn up được .heic -->
+            <button type="submit">Upload and Translate</button>
+        </form>
+        <!-- multiplefile -->
+        <form id="multiple-upload-form" action="/uploadmultiple" enctype="multipart/form-data" method="POST" class=".hidden">
+            <input type="file" name="multipleImage" id="multiple-file-input"
+                accept="image/png, image/jpg" multiple onchange="inputOnChange(this)">
             <button type="submit">Upload and Translate</button>
         </form>
     </div>
