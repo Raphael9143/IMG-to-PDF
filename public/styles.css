@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#drop-zone {
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    color: #aaa;
+}
+#drop-zone:hover {
+    border-color: #333;
+    color: #333;
+}

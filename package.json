@@ -10,9 +10,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bull": "^4.16.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "google-translate-api": "^2.3.0",
+    "multer": "^1.4.5-lts.1",
     "node-tesseract-ocr": "^2.2.1",
     "open-google-translator": "^1.0.5",
-    "pdfkit": "^0.15.0",
-    "tesseract-ocr": "^1.0.0"
+    "pdfkit": "^0.15.1",
+    "tesseract-ocr": "^1.0.0",
+    "tesseract.js": "^5.1.1"
   }
 }
