@@ -27,12 +27,11 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
         var enText = fs.readFileSync('stdout.txt').toString()
         const translatedText = await translate(enText)
         const pdfPath = createPDF(translatedText)
+        console.log("translate: ", translatedText)
         res.json({ 
             success: true,
-            filepath: file.path, 
             pdfPath: pdfPath,
-            ocrText: enText,
-            translatedText: translatedText
+            uploadType: 'single'
         })
     } catch (error) {
         console.error("Error during file upload:", error);

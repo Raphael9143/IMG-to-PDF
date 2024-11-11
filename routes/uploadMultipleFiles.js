@@ -18,7 +18,7 @@ const upload = multer({
 
 
 router.post('/', upload.array('multipleImage', 5), async (req, res, next) => {
-    if (files.length > 5) {
+    if (req.files.length > 5) {
         return res.status(400).json({ error: 'Cannot upload more than 5 files.' });
     }
     try {
@@ -29,11 +29,17 @@ router.post('/', upload.array('multipleImage', 5), async (req, res, next) => {
         const pdfPaths = []
         for (let file of files) {
             const text = await image2text(file.path)
-            const translatedText = await translate(text)
+            var fs = require('fs');
+            var enText = fs.readFileSync('stdout.txt').toString()
+            const translatedText = await translate(enText)
             const pdfPath = createPDF(translatedText)
             pdfPaths.push(pdfPath)
         }
-        res.json({ success: true, pdfPaths: pdfPaths });
+        res.json({ 
+            success: true, 
+            pdfPaths: pdfPaths, 
+            uploadType: 'multiple' 
+        })
     } catch (error) {
         console.error("Error during multiple file upload:", error);
         res.status(500).json({ error: 'An error occurred during multiple file upload' });

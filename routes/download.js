@@ -13,3 +13,5 @@ router.get('/:filename', (req, res) => {
         res.status(404).json({ error: 'file not found'})
     }
 })
+
+module.exports = router

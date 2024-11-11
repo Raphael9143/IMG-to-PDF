@@ -12,24 +12,22 @@
     <div class="container">
         <h1>Upload Image for Translation</h1>
         <div id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="onDrop(event)">Drag and
-            drop
-            an image here</div>
+            drop an image here</div>
         <!-- singlefile -->
-        <form id="single-upload-from" action="/uploadfile" enctype="multipart/form-data" method="POST" class=".hidden">
+        <form id="single-upload-from" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
             <input type="file" name="singleImage" id="single-file-input" accept="image/png, image/jpg" required
                 onchange="inputOnChange(this)"> 
             <button type="submit">Upload and Translate</button>
         </form>
         <!-- multiplefile -->
-        <form id="multiple-upload-form" action="/uploadmultiple" enctype="multipart/form-data" method="POST" class=".hidden">
+        <form id="multiple-upload-form" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
             <input type="file" name="multipleImage" id="multiple-file-input"
                 accept="image/png, image/jpg" multiple onchange="inputOnChange(this)">
             <button type="submit">Upload and Translate</button>
         </form>
-        <form action="" id="download-file" action="/download" method="POST" class=".hidden">
-            <button>
-                Download file
-            </button>
+        <form id="download-file" class="hidden">
+            <a id="download-link" href="#" download>
+            </a>
         </form>
     </div>
     <script src="script.js"></script>
