@@ -5,6 +5,7 @@
 const dropZone = document.getElementById('drop-zone')
 const singleInput = document.getElementById('single-file-input')
 const multipleInput = document.getElementById('multiple-file-input')
+const downloadButton = document.getElementById('download-file')
 
 function dragOver(event) {
     event.preventDefault()
@@ -19,8 +20,17 @@ function dragLeave(event) {
 function onDrop(event) {
     event.preventDefault()
     dropZone.style = "border-color: #ccc; color: #aaa;"
+    const validImageTypes = ['image/png', 'image/jpg']
 
     const files = event.dataTransfer.files
+
+    for (let file of files) {
+        if (!validImageTypes.includes(file.type)) {
+            alert('Only file .png and .jpg are allowed!')
+            return
+        }
+    }
+
     if (files.length == 1) {
         singleInput.files = files
         inputOnChange(singleInput)
@@ -40,6 +50,7 @@ function onDrop(event) {
 
 function inputOnChange(inputElement) {
     const files = inputElement.files
+
     if (files.length > 0) {
         uploadFile(files, files.length == 1 ? '/uploadfile' : '/uploadmultiple')
     }
