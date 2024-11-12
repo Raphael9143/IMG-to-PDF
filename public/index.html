@@ -15,16 +15,15 @@
             drop an image here</div>
         <!-- singlefile -->
         <form id="single-upload-from" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
-            <input type="file" name="singleImage" id="single-file-input" accept="image/png, image/jpg" required
-                onchange="inputOnChange(this)"> 
+            <input type="file" name="singleImage" id="single-file-input" accept="image/png, image/jpg" required> 
             <button type="submit">Upload and Translate</button>
         </form>
         <!-- multiplefile -->
-        <form id="multiple-upload-form" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
+        <!-- <form id="multiple-upload-form" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
             <input type="file" name="multipleImage" id="multiple-file-input"
-                accept="image/png, image/jpg" multiple onchange="inputOnChange(this)">
-            <button type="submit">Upload and Translate</button>
-        </form>
+                accept="image/png, image/jpg" multiple>
+            <button type="submit" id="upload-button">Upload and Translate</button>
+        </form> -->
         <form id="download-file" class="hidden">
             <a id="download-link" href="#" download>
             </a>

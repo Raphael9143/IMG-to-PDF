@@ -32,7 +32,7 @@ router.post('/', upload.array('multipleImage', 5), async (req, res, next) => {
             var fs = require('fs');
             var enText = fs.readFileSync('stdout.txt').toString()
             const translatedText = await translate(enText)
-            const pdfPath = createPDF(translatedText)
+            const pdfPath = createPDF(translatedText, file.originalname)
             pdfPaths.push(pdfPath)
         }
         res.json({ 

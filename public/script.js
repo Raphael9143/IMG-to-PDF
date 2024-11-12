@@ -4,7 +4,8 @@
 
 const dropZone = document.getElementById('drop-zone')
 const singleInput = document.getElementById('single-file-input')
-const multipleInput = document.getElementById('multiple-file-input')
+// const multipleInput = document.getElementById('multiple-file-input')
+const uploadButton = document.getElementById('upload-button')
 const downloadButton = document.getElementById('download-file')
 const downloadLink = document.getElementById('download-link')
 
@@ -35,34 +36,32 @@ function onDrop(event) {
 
     if (files.length == 1) {
         singleInput.files = files
-        inputOnChange(singleInput, '/uploadfile')
         singleInput.closest('form').classList.remove('hidden');
         singleInput.closest('form').classList.add('visible');
-        multipleInput.closest('form').classList.remove('visible');
-        multipleInput.closest('form').classList.add('hidden');
-    } else if (files.length > 1) {
-        multipleInput.files = files
-        inputOnChange(multipleInput, '/uploadmultiple')
-        multipleInput.closest('form').classList.remove('hidden');
-        multipleInput.closest('form').classList.add('visible');
-        singleInput.closest('form').classList.remove('visible');
-        singleInput.closest('form').classList.add('hidden');
+        // multipleInput.closest('form').classList.remove('visible');
+        // multipleInput.closest('form').classList.add('hidden');
+        // uploadFile(files, '/uploadfile')
     }
+    //  else if (files.length > 1) {
+    //     multipleInput.files = files
+    //     multipleInput.closest('form').classList.remove('hidden');
+    //     multipleInput.closest('form').classList.add('visible');
+    //     singleInput.closest('form').classList.remove('visible');
+    //     singleInput.closest('form').classList.add('hidden');
+    // }
 }
 
-function inputOnChange(inputElement, url) {
-    const files = inputElement.files
-
-    if (files.length > 0) {
-        uploadFile(files, url)
-    }
-}
+// uploadButton.addEventListener('click', async function () {
+    
+//     if (files.length > 0) {
+//         uploadFile(files, url)
+//     }
+// })
 
 async function uploadFile(files, url) {
     const formData = new FormData();
-    const fieldName = url === '/uploadfile' ? 'singleImage' : 'multipleImage';
+    const fieldName = "singleImage"
 
-    // Append each file to the FormData object
     for (let file of files) {
         formData.append(fieldName, file);
     }
@@ -85,18 +84,19 @@ async function uploadFile(files, url) {
             downloadButton.appendChild(link);
             downloadButton.classList.remove('hidden');
             downloadButton.classList.add('visible');
-        } else if (result.uploadType === 'multiple' && Array.isArray(result.pdfPaths) && result.pdfPaths.length) {
-            result.pdfPaths.forEach((pdfPath, index) => {
-                const link = document.createElement('a');
-                link.href = `/download/${pdfPath.split('/').pop()}`;
-                link.download = `translated_file_${index + 1}.pdf`;
-                link.textContent = `Download Translated File ${index + 1}`;
-                link.style.display = 'block'; 
-                downloadButton.appendChild(link);
-            });
-            downloadButton.classList.remove('hidden');
-            downloadButton.classList.add('visible');
-        }
+        } 
+        // else if (result.uploadType === 'multiple' && result.pdfPaths.length) {
+        //     result.pdfPaths.forEach((pdfPath, index) => {
+        //         const link = document.createElement('a');
+        //         link.href = `/download/${pdfPath.split('/').pop()}`;
+        //         link.download = `translated_file_${index + 1}.pdf`;
+        //         link.textContent = `Download Translated File ${index + 1}`;
+        //         link.style.display = 'block';
+        //         downloadButton.appendChild(link);
+        //     })
+        //     downloadButton.classList.remove('hidden');
+        //     downloadButton.classList.add('visible');
+        // }
 
         console.log("Upload successful:", result);
     } else {
@@ -108,7 +108,7 @@ async function uploadFile(files, url) {
 async function handleUpload(event) {
     event.preventDefault()
     const form = event.target
-    const url = form.id === 'single-upload-form' ? '/uploadfile' : '/uploadmultiple'
+    const url = '/uploadfile'
     const files = form.querySelector('input[type="file"]').files
     if (files.length > 0) {
         await uploadFile(files, url)
