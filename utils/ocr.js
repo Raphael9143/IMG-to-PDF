@@ -1,9 +1,15 @@
 const tesseract = require("node-tesseract-ocr")
 
 async function image2text(path){
-  return await tesseract.recognize(path, {
-    lang: "eng"
-  })
+  try {
+    const text = await tesseract.recognize(path, {
+      lang: 'eng'
+    })
+    return text
+  } catch (error) {
+    console.error('OCR error: ', error)
+    return null
+  }
 }
 
 module.exports = {
