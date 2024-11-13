@@ -3,6 +3,9 @@ const router = express.Router()
 const multer = require('multer')
 const path = require('path')
 const { sendToQueue } = require('../queue/publisher')
+const { image2text } = require('../utils/ocr')
+const { createPDF } = require('../utils/pdf')
+const { translate } = require('../utils/translate')
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -20,11 +23,6 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
         if (!file) {
             return res.status(400).json({ error: 'Please upload a file!' });
         }
-        // const text = await image2text(file.path)
-        // var fs = require('fs');
-        // var enText = fs.readFileSync('stdout.txt').toString()
-        // const translatedText = await translate(enText)
-        // const pdfPath = createPDF(translatedText)
         const text = await image2text(file.path);
         const translatedText = await translate(text);
         const pdfPath = await createPDF(translatedText, file.originalname);
@@ -33,8 +31,7 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
             success: true,
             pdfPath: pdfPath,
             uploadType: 'single',
-            // ocr: text,
-            // std: enText
+
         })
 
     } catch (error) {

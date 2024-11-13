@@ -42,12 +42,6 @@ router.post('/', (req, res, next) => {
         const zipFilePath = path.join(__dirname, '../output', zipFileName);
 
         for (let file of files) {
-            // const text = await image2text(file.path)
-            // var fs = require('fs');
-            // var enText = fs.readFileSync('stdout.txt').toString()
-            // const translatedText = await translate(enText)
-            // const pdfPath = createPDF(translatedText, file.originalname)
-            // pdfPaths.push(pdfPath)
             try {
                 console.log("Processing file:", file.originalname);
                 const text = await image2text(file.path);
@@ -59,11 +53,6 @@ router.post('/', (req, res, next) => {
                 console.error("Error processing file:", file.originalname, error);
             }
         }
-        // res.json({ 
-        //     success: true, 
-        //     pdfPaths: pdfPaths, 
-        //     uploadType: 'multiple' 
-        // })
 
         pdfPaths.forEach((pdfPath) => {
             if (!fs.existsSync(pdfPath)) {

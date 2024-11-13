@@ -4,14 +4,6 @@ const path = require('path');
 
 
 function createPDF(text, filename) {
-    // const outputFilePath = `output/${filename.split('.')[0]}.pdf`;
-    // const doc = new PDFDocument();
-    // doc.pipe(fs.createWriteStream(outputFilePath));
-    // doc.font('font/Roboto-Regular.ttf')
-    //     .fontSize(14)
-    //     .text(text, 100, 100);
-    // doc.end();
-    // return outputFilePath;
     return new Promise((resolve, reject) => {
         const outputFilePath = `output/${filename.split('.')[0]}.pdf`;
         const doc = new PDFDocument();
