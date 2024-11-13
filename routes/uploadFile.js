@@ -20,16 +20,21 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
         if (!file) {
             return res.status(400).json({ error: 'Please upload a file!' });
         }
-        const message = {
-            filePath: file.path,
-            fileName: file.filename
-        }
+        // const text = await image2text(file.path)
+        // var fs = require('fs');
+        // var enText = fs.readFileSync('stdout.txt').toString()
+        // const translatedText = await translate(enText)
+        // const pdfPath = createPDF(translatedText)
+        const text = await image2text(file.path);
+        const translatedText = await translate(text);
+        const pdfPath = await createPDF(translatedText, file.originalname);
 
-        await sendToQueue(message)
-
-        res.json({
+        res.json({ 
             success: true,
-            message: 'File is being processed.'
+            pdfPath: pdfPath,
+            uploadType: 'single',
+            // ocr: text,
+            // std: enText
         })
 
     } catch (error) {
