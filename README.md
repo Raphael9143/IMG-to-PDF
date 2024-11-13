@@ -3,10 +3,12 @@ Dưới đây là một chương trình có nhiệm vụ chuyển file ảnh ti�
 
 ## Hướng dẫn cài đặt
 Yêu cầu cài đặt trước [tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html) trên hệ điều hành của bạn. 
+Cài đặt [Erlang](https://www.erlang.org/downloads) và [RabbitMQ](https://www.rabbitmq.com/docs/install-windows) trước khi chạy 
 
 ```sh
 # Cài đặt các gói liên quan
 $ npm install
+$ npm install amqplib
 # Tạo folder cho output
 $ mkdir output
 # Khởi chạy ứng dụng demo

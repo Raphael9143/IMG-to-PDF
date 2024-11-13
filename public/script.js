@@ -4,7 +4,6 @@
 
 const dropZone = document.getElementById('drop-zone')
 const singleInput = document.getElementById('single-file-input')
-// const multipleInput = document.getElementById('multiple-file-input')
 const uploadButton = document.getElementById('upload-button')
 const downloadButton = document.getElementById('download-file')
 const downloadLink = document.getElementById('download-link')
@@ -38,25 +37,8 @@ function onDrop(event) {
         singleInput.files = files
         singleInput.closest('form').classList.remove('hidden');
         singleInput.closest('form').classList.add('visible');
-        // multipleInput.closest('form').classList.remove('visible');
-        // multipleInput.closest('form').classList.add('hidden');
-        // uploadFile(files, '/uploadfile')
     }
-    //  else if (files.length > 1) {
-    //     multipleInput.files = files
-    //     multipleInput.closest('form').classList.remove('hidden');
-    //     multipleInput.closest('form').classList.add('visible');
-    //     singleInput.closest('form').classList.remove('visible');
-    //     singleInput.closest('form').classList.add('hidden');
-    // }
 }
-
-// uploadButton.addEventListener('click', async function () {
-    
-//     if (files.length > 0) {
-//         uploadFile(files, url)
-//     }
-// })
 
 async function uploadFile(files, url) {
     const formData = new FormData();
@@ -84,19 +66,7 @@ async function uploadFile(files, url) {
             downloadButton.appendChild(link);
             downloadButton.classList.remove('hidden');
             downloadButton.classList.add('visible');
-        } 
-        // else if (result.uploadType === 'multiple' && result.pdfPaths.length) {
-        //     result.pdfPaths.forEach((pdfPath, index) => {
-        //         const link = document.createElement('a');
-        //         link.href = `/download/${pdfPath.split('/').pop()}`;
-        //         link.download = `translated_file_${index + 1}.pdf`;
-        //         link.textContent = `Download Translated File ${index + 1}`;
-        //         link.style.display = 'block';
-        //         downloadButton.appendChild(link);
-        //     })
-        //     downloadButton.classList.remove('hidden');
-        //     downloadButton.classList.add('visible');
-        // }
+        }
 
         console.log("Upload successful:", result);
     } else {
