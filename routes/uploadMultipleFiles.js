@@ -20,7 +20,14 @@ const upload = multer({
 })
 
 
-router.post('/', upload.array('multipleImage', 5), async (req, res, next) => {
+router.post('/', (req, res, next) => {
+    upload.array('multipleImage', 5)(req, res, (err) => {
+        if (err instanceof multer.MulterError && err.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.status(400).json({ error: 'Maximum files allowed is 5!' })
+        }
+        next()
+    })
+}, async (req, res, next) => {
     if (req.files.length > 5) {
         return res.status(400).json({ error: 'Cannot upload more than 5 files.' });
     }
@@ -67,28 +74,28 @@ router.post('/', upload.array('multipleImage', 5), async (req, res, next) => {
         const output = fs.createWriteStream(zipFilePath);
         const archive = archiver('zip', { zlib: { level: 9 } });
 
-        
+
 
         archive.on('error', (err) => {
             throw err;
         });
 
         archive.pipe(output);
-        
+
         pdfPaths.forEach(pdfPath => {
             archive.file(pdfPath, { name: path.basename(pdfPath) });
         });
-        
+
         output.on('close', () => {
             console.log(`ZIP file created with size: ${archive.pointer()} bytes`);
         });
-        
+
         await archive.finalize();
-        
-        res.json({ 
-            success: true, 
-            zipPath: `/download/${zipFileName}`, 
-            uploadType: 'multiple' 
+
+        res.json({
+            success: true,
+            zipPath: `/download/${zipFileName}`,
+            uploadType: 'multiple'
         });
     } catch (error) {
         console.error("Error during multiple file upload:", error);
