@@ -8,11 +8,12 @@ Cài đặt [Erlang](https://www.erlang.org/downloads) và [RabbitMQ](https://ww
 ```sh
 # Cài đặt các gói liên quan
 $ npm install
+$ npm i archiver
 $ npm install amqplib
 # Tạo folder cho output
 $ mkdir output
 # Khởi chạy ứng dụng demo
-$ npm start
+$ npm start/node server.js
 ```
 
 ## Mô Tả
@@ -21,6 +22,14 @@ $ npm start
 | utils/ocr.js | Chuyển đổi ảnh sang text |
 | utils/translate.js | Dịch tiếng Anh sang tiếng Việt |
 | utils/pdf.js | Chuyển đổi text sang PDF |
+| Routes |
+|--|:--|
+| Message Queue (queue) |
+|--|:--|
+| Pipes and Filters |
+|--|:--|
+| Client (public) |
+| Server (server.js) |
 
 ## Yêu cầu
  - Hoàn thiện chương trình sử dụng `express.js` cho phép upload một file ảnh và trả về một file `pdf` tương ứng

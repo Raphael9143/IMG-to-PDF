@@ -1,32 +1,25 @@
 const amqp = require('amqplib')
 const path = require('path')
 
-async function connectToRabbitMQ() {
+async function publish(queue, message) {
     try {
         const connection = await amqp.connect('amqp://localhost')
-        const channel = await connection.channel
+        const channel = await connection.createChannel()
 
-        const queue = 'imageProcessingQueue'
         await channel.assertQueue(queue, { durable: true })
+ 
+        channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)), {
+            persistent: true
+        })
 
-        return { connection, channel, queue }
+        console.log('Message to queue: ', message)
+        
+        setTimeout(() => {
+            connection.close()
+        }, 500)
     } catch (error) {
-        console.log("Error while connecting to RabbitMQ: ", error)
+        console.error('error publishing to queue: ', error)
     }
 }
 
-async function sendToQueue(message) {
-    const { connection, channel, queue } = await connectToRabbitMQ()
-
-    channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)), {
-        persistent: true
-    })
-
-    console.log('Message to queue: ', message)
-    
-    setTimeout(() => {
-        connection.close()
-    }, 500)
-}
-
-module.exports = { sendToQueue }
+module.exports = { publish }

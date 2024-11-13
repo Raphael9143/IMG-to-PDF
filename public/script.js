@@ -64,14 +64,14 @@ async function uploadFile(files, url) {
         const result = await response.json();
 
         downloadButton.innerHTML = '';
-        if (result.uploadType === 'single' && result.pdfPath) {
+        if (result.uploadType === 'single') {
             const link = document.createElement('a');
             link.href = `/download/${result.pdfPath.split('/').pop()}`;
             link.download = 'translated_file.pdf';
             link.textContent = 'Download Translated PDF';
             downloadButton.appendChild(link);
 
-        } else if (result.uploadType === 'multiple' && result.zipPath) {
+        } else if (result.uploadType === 'multiple') {
             const link = document.createElement('a');
             link.href = result.zipPath;
             link.download = 'translated_files.zip';

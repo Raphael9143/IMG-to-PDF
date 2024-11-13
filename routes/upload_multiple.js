@@ -1,13 +1,10 @@
-// npm i archiver
 const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const archiver = require('archiver');
-const { image2text } = require('../utils/ocr')
-const { createPDF } = require('../utils/pdf')
-const { translate } = require('../utils/translate')
+const { publish } = require('../queue/publisher')
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -43,12 +40,13 @@ router.post('/', (req, res, next) => {
 
         for (let file of files) {
             try {
-                console.log("Processing file:", file.originalname);
-                const text = await image2text(file.path);
-                const translatedText = await translate(text);
-                const pdfPath = await createPDF(translatedText, file.originalname);
+                const message = {
+                    fileName: file.originalname,
+                    filePath: file.path
+                }
+                await publish('image_processing', message)
+                const pdfPath = `/download/${file.filename}.pdf`
                 pdfPaths.push(pdfPath);
-                console.log("PDF created and added to zip:", pdfPath);
             } catch (error) {
                 console.error("Error processing file:", file.originalname, error);
             }
@@ -62,8 +60,6 @@ router.post('/', (req, res, next) => {
 
         const output = fs.createWriteStream(zipFilePath);
         const archive = archiver('zip', { zlib: { level: 9 } });
-
-
 
         archive.on('error', (err) => {
             throw err;
@@ -84,6 +80,7 @@ router.post('/', (req, res, next) => {
         res.json({
             success: true,
             zipPath: `/download/${zipFileName}`,
+            message: 'Files upload request sent, processing...',
             uploadType: 'multiple'
         });
     } catch (error) {

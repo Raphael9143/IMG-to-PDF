@@ -2,10 +2,7 @@ const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
-const { sendToQueue } = require('../queue/publisher')
-const { image2text } = require('../utils/ocr')
-const { createPDF } = require('../utils/pdf')
-const { translate } = require('../utils/translate')
+const { publish } = require('../queue/publisher')
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -23,13 +20,20 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
         if (!file) {
             return res.status(400).json({ error: 'Please upload a file!' });
         }
-        const text = await image2text(file.path);
-        const translatedText = await translate(text);
-        const pdfPath = await createPDF(translatedText, file.originalname);
 
+        const message = {
+            fileName: file.originalname,
+            filePath: file.path
+        }
+
+        const pdfPath = `/download/${file.filename}.pdf`
+        
+        await publish('image_processing', message)
+        
         res.json({ 
             success: true,
             pdfPath: pdfPath,
+            message: 'File upload request sent, processing...',
             uploadType: 'single',
 
         })
