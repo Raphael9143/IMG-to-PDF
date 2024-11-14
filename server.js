@@ -1,8 +1,7 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs')
-const uploadSingle = require('./routes/uploadFile')
-const uploadMultiple = require('./routes/uploadMultipleFiles')
+const uploadSingle = require('./routes/upload_single')
+const uploadMultiple = require('./routes/upload_multiple')
 const downloadFiles = require('./routes/download')
 
 const app = express();

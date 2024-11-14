@@ -1,6 +1,6 @@
 const tesseract = require("node-tesseract-ocr")
 
-async function image2text(path){
+async function image2text(path) {
   try {
     const text = await tesseract.recognize(path, {
       lang: 'eng'
