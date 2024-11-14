@@ -18,9 +18,11 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
             filePath: file.path
         }
 
-        await publishMessage('image_processing', message)
+        // await publishMessage('image_processing', message)
+        await publishMessage('imageQueue', message);
 
-        const pdfPath = await consumeMessage()
+        // const pdfPath = await consumeMessage()
+        const pdfPath = `${file.originalname.split('.')[0]}.pdf`;
         res.json({
             success: true,
             pdfPath: pdfPath,
