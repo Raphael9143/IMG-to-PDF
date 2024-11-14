@@ -4,16 +4,7 @@ const multer = require('multer')
 const path = require('path')
 const { publishMessage } = require('../queue/publisher')
 const { consumeMessage } = require('../queue/consumer')
-
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => cb(null, 'uploads'),
-        filename: (req, file, cb) => {
-            const ext = path.extname(file.originalname)
-            cb(null, `${file.originalname.split('.')[0]}-${Date.now()}${ext}`)
-        }
-    })
-})
+const upload = require('../config/multer')
 
 router.post('/', upload.single('singleImage'), async (req, res, next) => {
     try {
