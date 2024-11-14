@@ -1,9 +1,8 @@
 const amqp = require('amqplib')
-const path = require('path')
 
-async function publish(queue, message) {
+async function publishMessage(queue, message) {
     try {
-        const connection = await amqp.connect('amqp://localhost')
+        const connection = await amqp.connect('amqps://jorghvwp:GTvXw5g2jocKFsOINomyx3nfbmYgfLGZ@gerbil.rmq.cloudamqp.com/jorghvwp')
         const channel = await connection.createChannel()
 
         await channel.assertQueue(queue, { durable: true })
@@ -13,13 +12,11 @@ async function publish(queue, message) {
         })
 
         console.log('Message to queue: ', message)
-        
-        setTimeout(() => {
-            connection.close()
-        }, 500)
+        await channel.close()
+        await connection.close()
     } catch (error) {
         console.error('error publishing to queue: ', error)
     }
 }
 
-module.exports = { publish }
+module.exports = { publishMessage }

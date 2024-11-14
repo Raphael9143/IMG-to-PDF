@@ -2,11 +2,12 @@ const express = require('express')
 const router = express.Router()
 const multer = require('multer')
 const path = require('path')
-const { publish } = require('../queue/publisher')
+const { publishMessage } = require('../queue/publisher')
+const { consumeMessage } = require('../queue/consumer')
 
 const upload = multer({
     storage: multer.diskStorage({
-        destination: (req, file, cb) => cb(null, 'uploads'),    
+        destination: (req, file, cb) => cb(null, 'uploads'),
         filename: (req, file, cb) => {
             const ext = path.extname(file.originalname)
             cb(null, `${file.originalname.split('.')[0]}-${Date.now()}${ext}`)
@@ -26,16 +27,14 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
             filePath: file.path
         }
 
-        const pdfPath = `/download/${file.filename}.pdf`
-        
-        await publish('image_processing', message)
-        
-        res.json({ 
+        await publishMessage('image_processing', message)
+
+        const pdfPath = await consumeMessage()
+        res.json({
             success: true,
             pdfPath: pdfPath,
             message: 'File upload request sent, processing...',
-            uploadType: 'single',
-
+            uploadType: 'single'
         })
 
     } catch (error) {

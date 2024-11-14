@@ -4,7 +4,8 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const archiver = require('archiver');
-const { publish } = require('../queue/publisher')
+const { publishMessage } = require('../queue/publisher')
+const { consumeMessage } = require('../queue/consumer')
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -44,9 +45,9 @@ router.post('/', (req, res, next) => {
                     fileName: file.originalname,
                     filePath: file.path
                 }
-                await publish('image_processing', message)
-                const pdfPath = `/download/${file.filename}.pdf`
-                pdfPaths.push(pdfPath);
+                await publishMessage('image_processing', message)
+                const pdfPath = await consumeMessage()
+                pdfPaths.push(pdfPath)
             } catch (error) {
                 console.error("Error processing file:", file.originalname, error);
             }
@@ -57,6 +58,8 @@ router.post('/', (req, res, next) => {
                 console.warn(`File missing: ${pdfPath}`);
             }
         });
+
+        console.log(pdfPaths)
 
         const output = fs.createWriteStream(zipFilePath);
         const archive = archiver('zip', { zlib: { level: 9 } });

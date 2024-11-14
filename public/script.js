@@ -62,6 +62,7 @@ async function uploadFile(files, url) {
 
     if (response.ok) {
         const result = await response.json();
+        console.log(result)
 
         downloadButton.innerHTML = '';
         if (result.uploadType === 'single') {

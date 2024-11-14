@@ -4,46 +4,43 @@ const { createPDF } = require('../utils/pdf')
 const { translate } = require('../utils/translate')
 const path = require('path')
 
-async function start() {
-    try {
-        const connection = await amqp.connect('amqp://localhost')
-        const channel = await connection.createChannel()
-
-        const queue = 'image_processing'
-        await channel.assertQueue(queue, { durable: true })
-
-        return { channel, queue }
-    } catch (error) {
-        console.error("Error connecting to Rabbit MQ: ", error)
-    }
-}
-
-async function processMessage(channel, msg) {
-    try {
-        const data = JSON.parse(msg.content.toString())
-
-        const text = await image2text(data.filePath)
-        const translatedText = translate(text)
-        const pdfPath = createPDF(translatedText, data.fileName)
-
-        console.log(pdfPath)
-
-        console.log(`PDF created at: ${pdfPath}`)
-
-        channel.ack(msg)
-    } catch (error) {
-        console.error("Error sending messages to queue: ", error)
-    }
-}
-
-async function listenToQueue() {
-    const { channel, queue } = start()
-
-    channel.consume(queue, async (msg) => {
-        if (msg != null) {
-            await processMessage(channel, msg)
+async function consumeMessage() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const connection = await amqp.connect('amqps://jorghvwp:GTvXw5g2jocKFsOINomyx3nfbmYgfLGZ@gerbil.rmq.cloudamqp.com/jorghvwp')
+            const channel = await connection.createChannel()
+            console.log("successfully connected")
+    
+            const queue = 'image_processing'
+            await channel.assertQueue(queue, { durable: true })
+    
+            channel.prefetch(1)
+    
+            channel.consume(queue, async(msg) => {
+                if (msg != null) {
+                    const { fileName, filePath } = JSON.parse(msg.content.toString())
+                    try {
+                        const text = await image2text(filePath)
+                        const translatedText = await translate(text)
+                        const pdfPath = await createPDF(translatedText, fileName)
+                        
+                        channel.ack(msg)
+    
+                        console.log(pdfPath)
+    
+                        resolve(pdfPath)
+                    } catch (error) {
+                        console.error('Error consuming messages: ', error)
+                        reject(error)
+                    }
+                }
+            })
+    
+        } catch (error) {
+            console.error("Error connecting to Rabbit MQ: ", error)
+            reject(error)
         }
     })
 }
 
-module.exports = { listenToQueue }
+module.exports = { consumeMessage }
