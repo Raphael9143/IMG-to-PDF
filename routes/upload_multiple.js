@@ -37,11 +37,14 @@ router.post('/', (req, res, next) => {
                 }
                 await publishMessage('image_processing', message)
                 const pdfPath = await consumeMessage()
+                console.log("consume multiple")
+                console.log("pdf path", pdfPath)
                 pdfPaths.push(pdfPath)
             } catch (error) {
                 console.error("Error processing file:", file.originalname, error);
             }
         }
+        console.log("next step")
 
         pdfPaths.forEach((pdfPath) => {
             if (!fs.existsSync(pdfPath)) {

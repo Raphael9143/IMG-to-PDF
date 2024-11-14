@@ -6,12 +6,16 @@ const { publishMessage } = require('../queue/publisher')
 const { consumeMessage } = require('../queue/consumer')
 const upload = require('../config/multer')
 
+const files = []
+
 router.post('/', upload.single('singleImage'), async (req, res, next) => {
     try {
         const file = req.file;
         if (!file) {
             return res.status(400).json({ error: 'Please upload a file!' });
         }
+
+        files.push(file.path)
 
         const message = {
             fileName: file.originalname,
@@ -21,6 +25,7 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
         await publishMessage('image_processing', message)
 
         const pdfPath = await consumeMessage()
+        console.log("consume single")
         res.json({
             success: true,
             pdfPath: pdfPath,
