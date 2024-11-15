@@ -21,4 +21,8 @@ async function processOCRMessage(message) {
   }
 }
 
-consumeMessage('imageQueue', processOCRMessage);
+function startOCRFilter() {
+  consumeMessage('imageQueue', processOCRMessage);
+}
+
+module.exports = { startOCRFilter };

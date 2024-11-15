@@ -15,4 +15,8 @@ async function processTranslateMessage(message) {
     }
 }
 
-consumeMessage('translateQueue', processTranslateMessage);
+function startTranslateFilter() {
+    consumeMessage('translateQueue', processTranslateMessage);
+  }
+  
+  module.exports = { startTranslateFilter };
