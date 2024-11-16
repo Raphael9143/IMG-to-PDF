@@ -16,25 +16,6 @@ async function consumeMessage(queue, callback) {
     
             channel.prefetch(1)
     
-            // channel.consume(queue, async(msg) => {
-            //     if (msg != null) {
-            //         const { fileName, filePath } = JSON.parse(msg.content.toString())
-            //         try {
-            //             const text = await image2text(filePath)
-            //             const translatedText = await translate(text)
-            //             const pdfPath = await createPDF(translatedText, fileName)
-                        
-            //             channel.ack(msg)
-    
-            //             console.log(pdfPath)
-    
-            //             resolve(pdfPath)
-            //         } catch (error) {
-            //             console.error('Error consuming messages: ', error)
-            //             reject(error)
-            //         }
-            //     }
-            // })
             channel.consume(queue, async (msg) => {
                 if (msg) {
                     const message = JSON.parse(msg.content.toString());

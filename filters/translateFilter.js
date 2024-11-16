@@ -17,6 +17,6 @@ async function processTranslateMessage(message) {
 
 function startTranslateFilter() {
     consumeMessage('translateQueue', processTranslateMessage);
-  }
+}
   
-  module.exports = { startTranslateFilter };
+module.exports = { startTranslateFilter };

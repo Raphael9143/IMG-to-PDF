@@ -14,6 +14,6 @@ async function processPDFMessage(message) {
 
 function startPDFFilter() {
     consumeMessage('pdfQueue', processPDFMessage);
-  }
+}
   
-  module.exports = { startPDFFilter };
+module.exports = { startPDFFilter };
