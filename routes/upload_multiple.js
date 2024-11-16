@@ -35,7 +35,7 @@ router.post('/', (req, res, next) => {
                     fileName: file.originalname,
                     filePath: file.path
                 }
-                await publishMessage('image_processing', message)
+                await publishMessage('imageQueue', message)
                 const pdfPath = await consumeMessage()
                 pdfPaths.push(pdfPath)
             } catch (error) {

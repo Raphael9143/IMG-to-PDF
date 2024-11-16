@@ -1,40 +1,17 @@
 const amqp = require('amqplib')
-const { image2text } = require('../utils/ocr')
-const { createPDF } = require('../utils/pdf')
-const { translate } = require('../utils/translate')
 const path = require('path')
 
 async function consumeMessage(queue, callback) {
     return new Promise(async (resolve, reject) => {
         try {
+            // const connection = await amqp.connect('amqps://jorghvwp:GTvXw5g2jocKFsOINomyx3nfbmYgfLGZ@gerbil.rmq.cloudamqp.com/jorghvwp')
             const connection = await amqp.connect('amqp://localhost')
             const channel = await connection.createChannel()
             console.log(`Successfully connected to queue: ${queue}`)
-    
+
             // const queue = 'image_processing'
             await channel.assertQueue(queue, { durable: true })
-    
-            channel.prefetch(1)
-    
-            // channel.consume(queue, async(msg) => {
-            //     if (msg != null) {
-            //         const { fileName, filePath } = JSON.parse(msg.content.toString())
-            //         try {
-            //             const text = await image2text(filePath)
-            //             const translatedText = await translate(text)
-            //             const pdfPath = await createPDF(translatedText, fileName)
-                        
-            //             channel.ack(msg)
-    
-            //             console.log(pdfPath)
-    
-            //             resolve(pdfPath)
-            //         } catch (error) {
-            //             console.error('Error consuming messages: ', error)
-            //             reject(error)
-            //         }
-            //     }
-            // })
+
             channel.consume(queue, async (msg) => {
                 if (msg) {
                     const message = JSON.parse(msg.content.toString());
@@ -47,7 +24,7 @@ async function consumeMessage(queue, callback) {
                     }
                 }
             });
-    
+
         } catch (error) {
             // console.error("Error connecting to Rabbit MQ: ", error)
             // reject(error)

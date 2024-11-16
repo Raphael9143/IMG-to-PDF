@@ -2,6 +2,7 @@ const amqp = require('amqplib')
 
 async function publishMessage(queue, message) {
     try {
+        // const connection  = await amqp.connect('amqps://jorghvwp:GTvXw5g2jocKFsOINomyx3nfbmYgfLGZ@gerbil.rmq.cloudamqp.com/jorghvwp')
         const connection = await amqp.connect('amqp://localhost')
         const channel = await connection.createChannel()
 
