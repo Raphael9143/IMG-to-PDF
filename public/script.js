@@ -54,7 +54,6 @@ async function uploadFile(files, url) {
     for (let file of files) {
         formData.append(fieldName, file);
     }
-    console.log(url)
     try {
         const response = await fetch(url, {
             method: 'POST',

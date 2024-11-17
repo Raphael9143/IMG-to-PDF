@@ -21,8 +21,6 @@ const createPipeline = () => {
     return pipeline
 }
 
-
-
 router.post('/', upload.single('singleImage'), async (req, res, next) => {
     try {
         const file = req.file;
@@ -34,6 +32,7 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
             fileName: file.originalname,
             filePath: file.path
         }
+        console.log("try posting")
         const pipeline = createPipeline()
         console.log('successfully create pipeline')
         const result = await pipeline.execute(message)
