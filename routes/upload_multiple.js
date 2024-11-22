@@ -36,46 +36,66 @@ router.post('/', (req, res, next) => {
                     filePath: file.path
                 }
                 await publishMessage('imageQueue', message)
-                const pdfPath = `${file.originalname.split('.')[0]}.pdf`;
+                const pdfPath = path.join(__dirname, '../output', `${file.originalname.split('.')[0]}.pdf`)
                 pdfPaths.push(pdfPath)
             } catch (error) {
                 console.error("Error processing file:", file.originalname, error);
             }
         }
 
+        await new Promise(resolve => setTimeout(resolve, 5000))
         pdfPaths.forEach((pdfPath) => {
-            if (!fs.existsSync(pdfPath)) {
+            if(!fs.existsSync(pdfPath)) {
                 console.warn(`File missing: ${pdfPath}`);
             }
-        });
+        })
 
-        console.log(pdfPaths)
+        // SOLUTION 1: multiple pdf files download button.
+        // pdfPaths.forEach((pdfPath) => {
+        //     if(!fs.existsSync(pdfPath)) {
+        //         console.warn(`File missing: ${pdfPath}`);
+        //     }
+        // })
+        //
+        // res.json({
+        //     success: true,
+        //     pdfPaths: pdfPaths.map(pdfPath => `/download/${pdfPath}`),
+        //     message: 'Files upload request sent, processing...',
+        //     uploadType: 'multiple'
+        // })
 
-        const output = fs.createWriteStream(zipFilePath);
-        const archive = archiver('zip', { zlib: { level: 9 } });
+        // SOLUTION 2: zip file download button.
+        const output = fs.createWriteStream(zipFilePath)
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        })
 
         archive.on('error', (err) => {
-            throw err;
-        });
+            console.error("Error during zip file creation:", err)
+            throw err
+        })
 
-        archive.pipe(output);
+        archive.pipe(output)
 
-        pdfPaths.forEach(pdfPath => {
-            archive.file(pdfPath, { name: path.basename(pdfPath) });
-        });
+        pdfPaths.forEach((pdfPath) => {
+            if (!fs.existsSync(pdfPath)) {
+                archive.file(pdfPath, { name: path.basename(pdfPath) })
+            }
+        })
 
         output.on('close', () => {
-            console.log(`ZIP file created with size: ${archive.pointer()} bytes`);
-        });
+            console.log('Zip file created: ', zipFilePath)
+        })
 
-        await archive.finalize();
+        await archive.finalize()
 
         res.json({
             success: true,
             zipPath: `/download/${zipFileName}`,
             message: 'Files upload request sent, processing...',
             uploadType: 'multiple'
-        });
+        })
+
     } catch (error) {
         console.error("Error during multiple file upload:", error);
         res.status(500).json({ error: 'An error occurred during multiple file upload' });
