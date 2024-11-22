@@ -30,8 +30,6 @@ async function consumeMessage(queue, callback) {
             });
     
         } catch (error) {
-            // console.error("Error connecting to Rabbit MQ: ", error)
-            // reject(error)
             console.error(`Error connecting to RabbitMQ for queue ${queue}:`, error);
         }
     })
