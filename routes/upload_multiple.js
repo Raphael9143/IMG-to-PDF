@@ -52,8 +52,6 @@ router.post('/', upload.any('multipleImage'), async (req, res) => {
                     });
 
                     await archive.finalize();
-                    console.log(`ZIP file created at ${zipFilePath}`);
-
                     res.json({
                         success: true,
                         zipPath: `/download/${zipFileName}`,

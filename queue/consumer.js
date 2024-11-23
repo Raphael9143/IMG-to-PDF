@@ -1,17 +1,11 @@
 const amqp = require('amqplib')
-const { image2text } = require('../utils/ocr')
-const { createPDF } = require('../utils/pdf')
-const { translate } = require('../utils/translate')
 const path = require('path')
 
 async function consumeMessage(queue, callback) {
     return new Promise(async (resolve, reject) => {
         try {
             const connection = await amqp.connect('amqp://localhost')
-            const channel = await connection.createChannel()
-            console.log(`Successfully connected to queue: ${queue}`)
-    
-            // const queue = 'image_processing'
+            const channel = await connection.createChannel()    
             await channel.assertQueue(queue, { durable: true })
     
             channel.prefetch(1)

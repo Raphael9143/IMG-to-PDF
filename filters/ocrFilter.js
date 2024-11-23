@@ -12,7 +12,6 @@ async function processOCRMessage(message) {
       
       // Gửi văn bản OCR đến hàng đợi translateQueue
       await publishMessage('translateQueue', outputMessage);
-      console.log('OCR text sent to translateQueue:', outputMessage);
     } else {
       console.error('No text extracted from image.');
     }

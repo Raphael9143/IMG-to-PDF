@@ -4,12 +4,15 @@ const { createPDF } = require('../utils/pdf');
 
 async function processPDFMessage(message) {
     try {
-        const outputFilePath = await createPDF(message.viText, message.outputFilePath);
-        console.log(`PDF created successfully at: ${outputFilePath}`);
+        await createPDF(refactorText(message.viText), message.outputFilePath);
 
     } catch (error) {
         console.error('Error creating PDF:', error);
     }
+}
+
+function refactorText(text) {
+    return text.replace(/(\r\n|\n|\r)/gm, " ");
 }
 
 function startPDFFilter() {
