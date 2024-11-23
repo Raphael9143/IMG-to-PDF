@@ -23,6 +23,7 @@
     "pdfkit": "^0.15.1",
     "querystringify": "^2.2.0",
     "tesseract-ocr": "^1.0.0",
-    "tesseract.js": "^5.1.1"
+    "tesseract.js": "^5.1.1",
+    "ws": "^8.18.0"
   }
 }

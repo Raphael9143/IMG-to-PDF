@@ -12,10 +12,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/uploadfile', uploadSingle)
 app.use('/uploadmultiple', uploadMultiple)
+app.use('/download', downloadFiles)
 
 startFilters()
-
-app.use('/download', downloadFiles)
 
 app.listen(PORT, () => {
     console.log(`Server is listening on http://localhost:${PORT}`);

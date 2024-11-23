@@ -9,7 +9,7 @@ async function processTranslateMessage(message) {
 
         // Gửi văn bản đã dịch đến pdfQueue để tạo PDF
         await publishMessage('pdfQueue', outputMessage);
-        console.log('Translated text sent to pdfQueue:', outputMessage);
+        console.log('Translated text sent to pdfQueue.');
     } catch (error) {
         console.error('Error translating text:', error);
     }

@@ -23,6 +23,7 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
 
         // const pdfPath = await consumeMessage()
         const pdfPath = `${file.originalname.split('.')[0]}.pdf`;
+
         res.json({
             success: true,
             pdfPath: pdfPath,

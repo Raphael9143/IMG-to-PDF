@@ -9,7 +9,7 @@ async function consumeMessage(queue, callback) {
         try {
             const connection = await amqp.connect('amqp://localhost')
             const channel = await connection.createChannel()
-            console.log(`Successfully connected to queue: ${queue}`)
+            console.log(`Successfully consumed queue: ${queue}`)
     
             // const queue = 'image_processing'
             await channel.assertQueue(queue, { durable: true })

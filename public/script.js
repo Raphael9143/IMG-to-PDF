@@ -20,11 +20,6 @@ function onDrop(event) {
     const validImageTypes = ['image/png', 'image/jpg'];
     const files = event.dataTransfer.files;
 
-    if (files.length > 5) {
-        alert('Can\'t upload more than 5 files!')
-        return
-    }
-
     for (let file of files) {
         if (!validImageTypes.includes(file.type)) {
             alert('Only file .png and .jpg are allowed!');
@@ -73,21 +68,22 @@ async function uploadFile(files, url) {
                 downloadButton.appendChild(link);
     
             } else if (result.uploadType === 'multiple') {
-                //SOLUTION 1: multiple pdf files download button.
-                // result.pdfPaths.forEach(pdfPath => {
-                //     const link = document.createElement('a');
-                //     link.href = pdfPath;
-                //     link.download = pdfPath.split('/').pop();
-                //     link.textContent = `Download ${pdfPath.split('/').pop()}`;
-                //     downloadButton.appendChild(link);
-                // })
+                // SOLUTION 1: multiple pdf files download button.
+                result.pdfPaths.forEach(pdfPath => {
+                    console.log(pdfPath)
+                    const link = document.createElement('a');
+                    link.href = pdfPath;
+                    link.download = pdfPath.split('/').pop();
+                    link.textContent = `Download ${pdfPath.split('/').pop()}`;
+                    downloadButton.appendChild(link);
+                })
     
                 //SOLUTION 2: zip file download button.
-                const link = document.createElement('a');
-                link.href = result.zipPath;
-                link.download = 'translated_files.zip';
-                link.textContent = 'Download Translated Files ZIP';
-                downloadButton.appendChild(link);
+                // const link = document.createElement('a');
+                // link.href = result.zipPath;
+                // link.download = 'translated_files.zip';
+                // link.textContent = 'Download Translated Files ZIP';
+                // downloadButton.appendChild(link);
             }
     
             downloadButton.classList.remove('hidden');

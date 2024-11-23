@@ -8,11 +8,11 @@ async function processOCRMessage(message) {
     const text = await image2text(filePath);
     
     if (text) {
-      const outputMessage = { text, outputFilePath: `output/${fileName.split('.')[0]}.pdf` };
+      const outputMessage = { text, outputFilePath: `${fileName.split('.')[0]}.pdf` };
       
       // Gửi văn bản OCR đến hàng đợi translateQueue
       await publishMessage('translateQueue', outputMessage);
-      console.log('OCR text sent to translateQueue:', outputMessage);
+      console.log('OCR text sent to translateQueue.');
     } else {
       console.error('No text extracted from image.');
     }
