@@ -20,10 +20,10 @@ function onDrop(event) {
     const validImageTypes = ['image/png', 'image/jpg'];
     const files = event.dataTransfer.files;
 
-    if (files.length > 5) {
-        alert('Can\'t upload more than 5 files!')
-        return
-    }
+    // if (files.length > 5) {
+    //     alert('Can\'t upload more than 5 files!')
+    //     return
+    // }
 
     for (let file of files) {
         if (!validImageTypes.includes(file.type)) {

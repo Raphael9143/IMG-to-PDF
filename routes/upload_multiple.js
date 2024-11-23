@@ -9,77 +9,78 @@ const { consumeMessage } = require('../queue/consumer')
 const upload = require('../config/multer')
 
 router.post('/', (req, res, next) => {
-    upload.array('multipleImage', 5)(req, res, (err) => {
-        if (err instanceof multer.MulterError && err.code === "LIMIT_UNEXPECTED_FILE") {
-            return res.status(400).json({ error: 'Maximum files allowed is 5!' })
-        }
-        next()
-    })
-}, async (req, res, next) => {
-    if (req.files.length > 5) {
-        return res.status(400).json({ error: 'Cannot upload more than 5 files.' });
-    }
-    try {
-        const files = req.files;
-        if (!files || files.length === 0) {
-            return res.status(400).json({ error: 'Please upload one or more files!' });
-        }
+        upload.any('multipleImage')(req, res, (err) => {
+            if (err instanceof multer.MulterError && err.code === "LIMIT_UNEXPECTED_FILE") {
+                return res.status(400).json({ error: 'Maximum files allowed is 5!' });
+            }
+            next();
+        });
+    },
+    async (req, res) => {
+        try {
+            const files = req.files;
+            if (!files || files.length === 0) {
+                return res.status(400).json({ error: 'Please upload one or more files!' });
+            }
 
-        const pdfPaths = []
-        const zipFileName = `translated_files_${Date.now()}.zip`;
-        const zipFilePath = path.join(__dirname, '../output', zipFileName);
-
-        for (let file of files) {
-            try {
+            for (let file of files) {
                 const message = {
                     fileName: file.originalname,
-                    filePath: file.path
+                    filePath: file.path,
+                };
+                await publishMessage('imageQueue', message);
+            }
+
+            const zipFileName = `translated_files_${Date.now()}.zip`;
+            const zipFilePath = path.join(__dirname, '../output', zipFileName);
+
+
+
+
+            const intervalCheck = setInterval(async () => {
+                const processedFiles = files.map((file) => {
+                    const pdfPath = path.join(
+                        __dirname,
+                        '../output',
+                        `${file.originalname.split('.')[0]}.pdf`
+                    );
+                    return pdfPath;
+                });
+
+                const allFilesExist = processedFiles.every((pdfPath) => fs.existsSync(pdfPath));
+                if (allFilesExist) {
+                    clearInterval(intervalCheck);
+
+
+                    const output = fs.createWriteStream(zipFilePath);
+                    const archive = archiver('zip', { zlib: { level: 9 } });
+
+                    archive.on('error', (err) => {
+                        throw err;
+                    });
+
+                    archive.pipe(output);
+
+                    processedFiles.forEach((pdfPath) => {
+                        archive.file(pdfPath, { name: path.basename(pdfPath) });
+                    });
+
+                    await archive.finalize();
+                    console.log(`ZIP file created at ${zipFilePath}`);
+
+                    res.json({
+                        success: true,
+                        zipPath: `/download/${zipFileName}`,
+                        message: 'Files upload request sent, processing...',
+                        uploadType: 'multiple',
+                    });
                 }
-                await publishMessage('imageQueue', message)
-                const pdfPath = `${file.originalname.split('.')[0]}.pdf`;
-                pdfPaths.push(pdfPath)
-            } catch (error) {
-                console.error("Error processing file:", file.originalname, error);
-            }
+            }, 3000);
+        } catch (error) {
+            console.error('Error during multiple file upload:', error);
+            res.status(500).json({ error: 'An error occurred during multiple file upload' });
         }
-
-        pdfPaths.forEach((pdfPath) => {
-            if (!fs.existsSync(pdfPath)) {
-                console.warn(`File missing: ${pdfPath}`);
-            }
-        });
-
-        console.log(pdfPaths)
-
-        const output = fs.createWriteStream(zipFilePath);
-        const archive = archiver('zip', { zlib: { level: 9 } });
-
-        archive.on('error', (err) => {
-            throw err;
-        });
-
-        archive.pipe(output);
-
-        pdfPaths.forEach(pdfPath => {
-            archive.file(pdfPath, { name: path.basename(pdfPath) });
-        });
-
-        output.on('close', () => {
-            console.log(`ZIP file created with size: ${archive.pointer()} bytes`);
-        });
-
-        await archive.finalize();
-
-        res.json({
-            success: true,
-            zipPath: `/download/${zipFileName}`,
-            message: 'Files upload request sent, processing...',
-            uploadType: 'multiple'
-        });
-    } catch (error) {
-        console.error("Error during multiple file upload:", error);
-        res.status(500).json({ error: 'An error occurred during multiple file upload' });
     }
-});
+);
 
 module.exports = router
