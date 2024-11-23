@@ -8,20 +8,9 @@ const { publishMessage } = require('../queue/publisher')
 const { consumeMessage } = require('../queue/consumer')
 const upload = require('../config/multer')
 
-router.post('/', (req, res, next) => {
-        upload.any('multipleImage')(req, res, (err) => {
-            if (err instanceof multer.MulterError && err.code === "LIMIT_UNEXPECTED_FILE") {
-                return res.status(400).json({ error: 'Maximum files allowed is 5!' });
-            }
-            next();
-        });
-    },
-    async (req, res) => {
+router.post('/', upload.any('multipleImage'), async (req, res) => {
         try {
             const files = req.files;
-            if (!files || files.length === 0) {
-                return res.status(400).json({ error: 'Please upload one or more files!' });
-            }
 
             for (let file of files) {
                 const message = {
@@ -33,9 +22,6 @@ router.post('/', (req, res, next) => {
 
             const zipFileName = `translated_files_${Date.now()}.zip`;
             const zipFilePath = path.join(__dirname, '../output', zipFileName);
-
-
-
 
             const intervalCheck = setInterval(async () => {
                 const processedFiles = files.map((file) => {
