@@ -47,6 +47,31 @@ function onDrop(event) {
     }
 }
 
+function handleFiles(files) {
+    const validImageTypes = ['image/png', 'image/jpg'];
+
+    for (let file of files) {
+        if (!validImageTypes.includes(file.type)) {
+            alert('Only file .png and .jpg are allowed!');
+            return;
+        }
+    }
+
+    if (files.length === 1) {
+        singleInput.files = files;
+        singleInput.closest('form').classList.remove('hidden');
+        singleInput.closest('form').classList.add('visible');
+        multipleInput.closest('form').classList.remove('visible');
+        multipleInput.closest('form').classList.add('hidden');
+    } else if (files.length > 1) {
+        multipleInput.files = files;
+        multipleInput.closest('form').classList.remove('hidden');
+        multipleInput.closest('form').classList.add('visible');
+        singleInput.closest('form').classList.remove('visible');
+        singleInput.closest('form').classList.add('hidden');
+    }
+}
+
 async function uploadFile(files, url) {
     const formData = new FormData();
     const fieldName = files.length > 1 ? "multipleImage" : "singleImage";
