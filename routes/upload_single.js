@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
+const fs = require('fs')
 const path = require('path')
 const { publishMessage } = require('../queue/publisher')
-const { consumeMessage } = require('../queue/consumer')
 const upload = require('../config/multer')
 
 router.post('/', upload.single('singleImage'), async (req, res, next) => {
@@ -18,15 +17,20 @@ router.post('/', upload.single('singleImage'), async (req, res, next) => {
             filePath: file.path
         }
 
-        await publishMessage('image_processing', message)
-
-        const pdfPath = await consumeMessage()
-        res.json({
-            success: true,
-            pdfPath: pdfPath,
-            message: 'File upload request sent, processing...',
-            uploadType: 'single'
-        })
+        // await publishMessage('image_processing', message)
+        await publishMessage('imageQueue', message);
+        
+        // const pdfPath = await consumeMessage()
+        const pdfPath = `${file.originalname.split('.')[0]}.pdf`;
+        const dirPath = path.join(__dirname, '../output', pdfPath)
+        if (fs.existsSync(dirPath)) {
+            res.json({
+                success: true,
+                pdfPath: pdfPath,
+                message: 'File upload request sent, processing...',
+                uploadType: 'single'
+            })
+        }
 
     } catch (error) {
         console.error("Error during file upload:", error);

@@ -11,8 +11,11 @@
 <body>
     <div class="container">
         <h1>Upload Image for Translation</h1>
-        <div id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="onDrop(event)">Drag and
-            drop an image here</div>
+        <div id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="onDrop(event)">
+            Drag and drop an image here
+            <input type="file" id="file-input" accept="image/png image/jpg" multiple onchange="handleFiles(this.files)">
+            <label for="file-input">or click to upload</label>
+        </div>
         <form id="single-upload-from" enctype="multipart/form-data" method="POST" class="hidden" onsubmit="handleUpload(event)">
             <input type="file" name="singleImage" id="single-file-input" accept="image/png, image/jpg" required> 
             <button type="submit">Upload and Translate</button>

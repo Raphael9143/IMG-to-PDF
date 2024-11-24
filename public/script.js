@@ -20,10 +20,35 @@ function onDrop(event) {
     const validImageTypes = ['image/png', 'image/jpg'];
     const files = event.dataTransfer.files;
 
-    if (files.length > 5) {
-        alert('Can\'t upload more than 5 files!')
-        return
+    // if (files.length > 5) {
+    //     alert('Can\'t upload more than 5 files!')
+    //     return
+    // }
+
+    for (let file of files) {
+        if (!validImageTypes.includes(file.type)) {
+            alert('Only file .png and .jpg are allowed!');
+            return;
+        }
     }
+
+    if (files.length === 1) {
+        singleInput.files = files;
+        singleInput.closest('form').classList.remove('hidden');
+        singleInput.closest('form').classList.add('visible');
+        multipleInput.closest('form').classList.remove('visible');
+        multipleInput.closest('form').classList.add('hidden');
+    } else if (files.length > 1) {
+        multipleInput.files = files;
+        multipleInput.closest('form').classList.remove('hidden');
+        multipleInput.closest('form').classList.add('visible');
+        singleInput.closest('form').classList.remove('visible');
+        singleInput.closest('form').classList.add('hidden');
+    }
+}
+
+function handleFiles(files) {
+    const validImageTypes = ['image/png', 'image/jpg'];
 
     for (let file of files) {
         if (!validImageTypes.includes(file.type)) {
