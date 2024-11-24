@@ -21,6 +21,7 @@
     "node-tesseract-ocr": "^2.2.1",
     "open-google-translator": "^1.0.5",
     "pdfkit": "^0.15.1",
+    "piscina": "^4.7.0",
     "querystringify": "^2.2.0",
     "tesseract-ocr": "^1.0.0",
     "tesseract.js": "^5.1.1"

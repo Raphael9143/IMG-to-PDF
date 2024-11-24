@@ -12,6 +12,8 @@ router.post('/', upload.any('multipleImage'), async (req, res) => {
         try {
             const files = req.files;
 
+            const startTime = performance.now();
+
             for (let file of files) {
                 const message = {
                     fileName: file.originalname,
@@ -19,6 +21,8 @@ router.post('/', upload.any('multipleImage'), async (req, res) => {
                 };
                 await publishMessage('imageQueue', message);
             }
+
+
 
             const zipFileName = `translated_files_${Date.now()}.zip`;
             const zipFilePath = path.join(__dirname, '../output', zipFileName);
@@ -62,6 +66,9 @@ router.post('/', upload.any('multipleImage'), async (req, res) => {
                     });
                 }
             }, 3000);
+
+            const endTime = performance.now();
+            console.log(`Time taken to process all files: ${endTime - startTime}ms`);
         } catch (error) {
             console.error('Error during multiple file upload:', error);
             res.status(500).json({ error: 'An error occurred during multiple file upload' });
