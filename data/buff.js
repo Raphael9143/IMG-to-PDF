@@ -21,9 +21,9 @@
 // Con lạy 9 phương trời
 // Con lạy 10 phương chư phật
 // Con lạy chư phật 10 phương
-// Tín chủ con tên là ....
+// Tín chủ con tên là Đỗ Đình Dũng (chủ vị), Hoàng Hữu Phước, Nguyễn Văn Bản
 // Con xin kính lễ – Hôm nay là ngày ... tháng ... năm ...
-// Tức ngày ất dậu tháng kỷ tỵ năm giáp thìn
+// Tức Ngày Nhâm Thìn tháng Ất Hợi năm Giáp Thìn
 // Con thành tâm tu thiết lễ nghi tạ các ngài phù hộ độ trì cho chúng con ....
 // Xin dâng kính mời:   Liệt Vị Tôn Thần Bản Cảnh Tiền Hậu Linh Chúa Đất, Thần Tài Tiền Vị,
 //                      Thần Lộc Triệu Công Minh Thần Linh Bản Sứ Nơi đây.
