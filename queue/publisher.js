@@ -11,7 +11,6 @@ async function publishMessage(queue, message) {
             persistent: true
         })
 
-        console.log(`Message sent to queue ${queue}:`, message)
         await channel.close()
         await connection.close()
     } catch (error) {
