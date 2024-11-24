@@ -40,6 +40,8 @@ router.post('/', upload.any('multipleImage'), async (req, res) => {
                 const allFilesExist = processedFiles.every((pdfPath) => fs.existsSync(pdfPath));
                 if (allFilesExist) {
                     clearInterval(intervalCheck);
+                    const endTime = performance.now();
+                    console.log(`Time taken to process all files: ${endTime - startTime}ms`);
 
 
                     const output = fs.createWriteStream(zipFilePath);

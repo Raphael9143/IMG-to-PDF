@@ -1,12 +1,13 @@
 const { consumeMessage } = require('../queue/consumer');
 const path = require('path');
-const {Worker} = require('worker_threads');
+const { Worker } = require('worker_threads');
 
 const workers = [];
-const maxThreads = 4;
+const maxThreads = 2;
 let availableWorkers = [];
+let messageQueue = [];
 
-function startPDFFilter(){
+function startPDFFilter() {
     for (let i = 0; i < maxThreads; i++) {
         const worker = new Worker(path.resolve(__dirname, '../worker/pdfWorker.js'));
 
@@ -16,7 +17,11 @@ function startPDFFilter(){
         worker.on('message', (message) => {
             if (message === 'ready') {
                 availableWorkers.push(worker);
-                checkQueue();
+                processQueue();
+            } else {
+                console.log('PDF processing result:', message);
+                availableWorkers.push(worker);
+                processQueue();
             }
         });
 
@@ -30,30 +35,28 @@ function startPDFFilter(){
             }
         });
     }
-    consumeMessage('pdfQueue', (message) => {
-        if (availableWorkers.length > 0) {
-            const worker = availableWorkers.pop();
-            worker.postMessage(message);
-        } else {
-            setTimeout(() => consumeMessage('pdfQueue', (msg) => {
-                if (availableWorkers.length > 0) {
-                    const worker = availableWorkers.pop();
-                    worker.postMessage(msg);
-                }
-            }, 1000));
-        }
-    });
 
-        console.log('PDF filter started with competing consumers.');
-    }
-function checkQueue() {
+    // Continuously consume messages from the queue
+    consumeMessage('pdfQueue', handleMessage);
+    console.log('PDF filter started with competing consumers.');
+}
+
+function handleMessage(message) {
     if (availableWorkers.length > 0) {
-        consumeMessage('pdfQueue', (message) => {
-            if (message) {
-                const worker = availableWorkers.pop();
-                worker.postMessage(message);
-            }
-        });
+        const worker = availableWorkers.pop();
+        worker.postMessage(message);
+    } else {
+        messageQueue.push(message);
+    }
+    // Continuously consume messages
+    consumeMessage('pdfQueue', handleMessage);
+}
+
+function processQueue() {
+    while (availableWorkers.length > 0 && messageQueue.length > 0) {
+        const worker = availableWorkers.pop();
+        const message = messageQueue.shift();
+        worker.postMessage(message);
     }
 }
 

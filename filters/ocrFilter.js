@@ -3,10 +3,12 @@ const { consumeMessage } = require('../queue/consumer');
 const path = require('path');
 
 const workers = [];
-const maxThreads = 4;
+const maxThreads = 2
 let availableWorkers = [];
+let messageQueue = [];
 
 function startOCRFilter() {
+    // Create a worker pool with maxThreads workers
     for (let i = 0; i < maxThreads; i++) {
         const worker = new Worker(path.resolve(__dirname, '../worker/ocrWorker.js'));
         workers.push(worker);
@@ -14,10 +16,12 @@ function startOCRFilter() {
 
         worker.on('message', (message) => {
             if (message === 'ready') {
-                availableWorkers.push(worker);
-                checkQueue();
+                availableWorkers.push(worker); // Add the worker back to the available pool
+                processQueue();
             } else {
                 console.log('OCR processing result:', message);
+                availableWorkers.push(worker); // Add the worker back to the available pool
+                processQueue();
             }
         });
 
@@ -32,27 +36,27 @@ function startOCRFilter() {
         });
     }
 
-    consumeMessage('imageQueue', (message) => {
-        if (availableWorkers.length > 0) {
-            const worker = availableWorkers.pop();
-            worker.postMessage(message);
-        } else {
-            // If no workers are available, requeue the message
-            setTimeout(() => consumeMessage('imageQueue', (msg) => worker.postMessage(msg)), 1000);
-        }
-    });
-
+    // Continuously consume messages from the queue
+    consumeMessage('imageQueue', handleMessage);
     console.log('OCR filter started with competing consumers.');
 }
 
-function checkQueue() {
+function handleMessage(message) {
     if (availableWorkers.length > 0) {
-        consumeMessage('imageQueue', (message) => {
-            if (message) {
-                const worker = availableWorkers.pop();
-                worker.postMessage(message);
-            }
-        });
+        const worker = availableWorkers.pop();
+        worker.postMessage(message);
+    } else {
+        messageQueue.push(message);
+    }
+    // Continuously consume messages
+    consumeMessage('imageQueue', handleMessage);
+}
+
+function processQueue() {
+    while (availableWorkers.length > 0 && messageQueue.length > 0) {
+        const worker = availableWorkers.pop();
+        const message = messageQueue.shift();
+        worker.postMessage(message);
     }
 }
 

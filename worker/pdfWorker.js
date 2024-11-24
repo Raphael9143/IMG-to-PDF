@@ -4,7 +4,7 @@ const {parentPort} = require('worker_threads');
 async function processPDFMessage(message) {
     try {
         const outputFilePath = await createPDF(message.viText, message.outputFilePath);
-        console.log(`PDF created successfully at: ${outputFilePath}`);
+        //console.log(`PDF created successfully at: ${outputFilePath}`);
 
         parentPort.postMessage(`PDF created successfully at: ${outputFilePath}`);
 

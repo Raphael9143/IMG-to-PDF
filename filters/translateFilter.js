@@ -2,12 +2,12 @@ const { consumeMessage } = require('../queue/consumer');
 const { Worker } = require('worker_threads');
 const path = require('path');
 
-
-const workers=[];
+const workers = [];
+const maxThreads = 2;
 let availableWorkers = [];
-const maxThreads = 4;
+let messageQueue = [];
 
-function startTranslateFilter(){
+function startTranslateFilter() {
     for (let i = 0; i < maxThreads; i++) {
         const worker = new Worker(path.resolve(__dirname, '../worker/transWorker.js'));
 
@@ -15,46 +15,48 @@ function startTranslateFilter(){
         availableWorkers.push(worker);
 
         worker.on('message', (message) => {
-            if (message ==='ready'){
+            if (message === 'ready') {
                 availableWorkers.push(worker);
-                checkQueue();
-            }
-            else {
+                processQueue();
+            } else {
                 console.log('Translate processing result:', message);
+                availableWorkers.push(worker);
+                processQueue();
             }
         });
+
         worker.on('error', (error) => {
             console.error(error);
         });
+
         worker.on('exit', (code) => {
             if (code !== 0) {
                 console.error(new Error(`Worker stopped with exit code ${code}`));
             }
         });
     }
-    consumeMessage('translateQueue', (message) => {
-        if (availableWorkers.length > 0) {
-            const worker = availableWorkers.pop();
-            worker.postMessage(message);
-        } else {
-            setTimeout(() => consumeMessage('translateQueue', (msg) =>{
-            if (availableWorkers.length > 0) {
-                const worker = availableWorkers.pop();
-                worker.postMessage(msg);
-            }}), 1000);
-        }
-    });
+
+    // Continuously consume messages from the queue
+    consumeMessage('translateQueue', handleMessage);
     console.log('Translate filter started with competing consumers.');
 }
 
-function checkQueue() {
+function handleMessage(message) {
     if (availableWorkers.length > 0) {
-        consumeMessage('translateQueue', (message) => {
-            if (message) {
-                const worker = availableWorkers.pop();
-                worker.postMessage(message);
-            }
-        });
+        const worker = availableWorkers.pop();
+        worker.postMessage(message);
+    } else {
+        messageQueue.push(message);
+    }
+    // Continuously consume messages
+    consumeMessage('translateQueue', handleMessage);
+}
+
+function processQueue() {
+    while (availableWorkers.length > 0 && messageQueue.length > 0) {
+        const worker = availableWorkers.pop();
+        const message = messageQueue.shift();
+        worker.postMessage(message);
     }
 }
 
