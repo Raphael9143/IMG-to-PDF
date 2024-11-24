@@ -7,8 +7,6 @@ const maxThreads = 4;
 let availableWorkers = [];
 
 function startOCRFilter() {
-
-    // Tạo worker pool với số lượng worker là maxThreads
     for (let i = 0; i < maxThreads; i++) {
         const worker = new Worker(path.resolve(__dirname, '../worker/ocrWorker.js'));
         workers.push(worker);
@@ -16,9 +14,10 @@ function startOCRFilter() {
 
         worker.on('message', (message) => {
             if (message === 'ready') {
-                // Đưa worker vào danh sách worker rảnh
                 availableWorkers.push(worker);
                 checkQueue();
+            } else {
+                console.log('OCR processing result:', message);
             }
         });
 
@@ -35,12 +34,10 @@ function startOCRFilter() {
 
     consumeMessage('imageQueue', (message) => {
         if (availableWorkers.length > 0) {
-
-            // Lấy worker rảnh và gửi message đến worker
             const worker = availableWorkers.pop();
             worker.postMessage(message);
         } else {
-            // Nếu không có worker rảnh thì thử lại sau 1 giây
+            // If no workers are available, requeue the message
             setTimeout(() => consumeMessage('imageQueue', (msg) => worker.postMessage(msg)), 1000);
         }
     });
@@ -48,13 +45,12 @@ function startOCRFilter() {
     console.log('OCR filter started with competing consumers.');
 }
 
-// Kiểm tra hàng đợi và gửi message đến worker nếu có worker trống
 function checkQueue() {
     if (availableWorkers.length > 0) {
         consumeMessage('imageQueue', (message) => {
             if (message) {
-                const worker = availableWorkers.pop();// Lấy worker rảnh
-                worker.postMessage(message);// Gửi message đến worker
+                const worker = availableWorkers.pop();
+                worker.postMessage(message);
             }
         });
     }

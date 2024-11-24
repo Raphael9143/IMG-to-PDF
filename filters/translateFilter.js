@@ -1,6 +1,4 @@
 const { consumeMessage } = require('../queue/consumer');
-const { publishMessage } = require('../queue/publisher');
-const { translate } = require('../utils/translate');
 const { Worker } = require('worker_threads');
 const path = require('path');
 
@@ -21,6 +19,9 @@ function startTranslateFilter(){
                 availableWorkers.push(worker);
                 checkQueue();
             }
+            else {
+                console.log('Translate processing result:', message);
+            }
         });
         worker.on('error', (error) => {
             console.error(error);
@@ -36,9 +37,14 @@ function startTranslateFilter(){
             const worker = availableWorkers.pop();
             worker.postMessage(message);
         } else {
-            setTimeout(() => consumeMessage('translateQueue', (msg) => worker.postMessage(msg)), 1000);
+            setTimeout(() => consumeMessage('translateQueue', (msg) =>{
+            if (availableWorkers.length > 0) {
+                const worker = availableWorkers.pop();
+                worker.postMessage(msg);
+            }}), 1000);
         }
     });
+    console.log('Translate filter started with competing consumers.');
 }
 
 function checkQueue() {

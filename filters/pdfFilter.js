@@ -1,6 +1,4 @@
 const { consumeMessage } = require('../queue/consumer');
-
-
 const path = require('path');
 const {Worker} = require('worker_threads');
 
@@ -32,8 +30,22 @@ function startPDFFilter(){
             }
         });
     }
-}
+    consumeMessage('pdfQueue', (message) => {
+        if (availableWorkers.length > 0) {
+            const worker = availableWorkers.pop();
+            worker.postMessage(message);
+        } else {
+            setTimeout(() => consumeMessage('pdfQueue', (msg) => {
+                if (availableWorkers.length > 0) {
+                    const worker = availableWorkers.pop();
+                    worker.postMessage(msg);
+                }
+            }, 1000));
+        }
+    });
 
+        console.log('PDF filter started with competing consumers.');
+    }
 function checkQueue() {
     if (availableWorkers.length > 0) {
         consumeMessage('pdfQueue', (message) => {
