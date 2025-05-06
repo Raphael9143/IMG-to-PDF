@@ -31,6 +31,8 @@ $ npm start/node server.js
 | Client (public) |
 | Server (server.js) |
 
-## Yêu cầu
- - Hoàn thiện chương trình sử dụng `express.js` cho phép upload một file ảnh và trả về một file `pdf` tương ứng
- - Sử dụng `Pipes and Filters pattern` và `message queue` để hoàn thiện chương trình trên.
+## Giải pháp đã sử dụng
+ - Sử dụng `express.js` cho phép upload một file ảnh và trả về một file `pdf` tương ứng
+ - Sử dụng `Pipes and Filters pattern` và `message queue` để hoàn thiện chương trình
+ - [Queue-Based Load Leveling pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling)
+ - [Competing Consumers pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/competing-consumers)
